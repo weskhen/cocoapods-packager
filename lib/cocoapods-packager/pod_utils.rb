@@ -30,6 +30,7 @@ module Pod
             target.build_configurations.each do |config|
               config.build_settings['CLANG_MODULES_AUTOLINK'] = 'NO'
               config.build_settings['GCC_GENERATE_DEBUGGING_SYMBOLS'] = 'NO'
+              config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
             end
           end
           static_installer.pods_project.save
@@ -158,7 +159,8 @@ module Pod
         file_accessors = create_file_accessors(static_target, dynamic_sandbox)
 
         archs = []
-        dynamic_target = Pod::PodTarget.new(dynamic_sandbox, true, static_target.user_build_configurations, archs, platform, static_target.specs, static_target.target_definitions, file_accessors)
+        buildy_type = Pod::BuildType.static_framework()
+        dynamic_target = Pod::PodTarget.new(dynamic_sandbox, buildy_type, static_target.user_build_configurations, archs, platform, static_target.specs, static_target.target_definitions, file_accessors)
         dynamic_target
       end
 
